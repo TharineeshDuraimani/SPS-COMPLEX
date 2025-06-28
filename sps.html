@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Weekly Wage Calculator</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      padding: 10px;
+      background-color: #f4f4f4;
+      margin: 0;
+    }
+    h1 {
+      text-align: center;
+      font-size: 1.8em;
+      margin-bottom: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-top: 12px;
+      font-weight: 600;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 4px;
+      font-size: 1em;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      margin-top: 15px;
+      padding: 12px;
+      width: 100%;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+    #output {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #e9ecef;
+      border-radius: 8px;
+      font-size: 1em;
+    }
+
+    #calculationBox p, #calculationBox h2 {
+      margin: 6px 0;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 5px;
+      }
+      .container {
+        padding: 15px;
+      }
+      h1 {
+        font-size: 1.5em;
+      }
+      button {
+        font-size: 0.95em;
+        padding: 10px;
+      }
+      input {
+        font-size: 0.95em;
+        padding: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Weekly Wage Calculator</h1>
+
+  <label>Monday Date:</label>
+  <input type="date" id="mondayDate" />
+
+  <label>No. of Main Workers (₹1200):</label>
+  <input type="number" id="mainWorkers" value="0" />
+
+  <label>No. of Secondary Workers (₹900):</label>
+  <input type="number" id="secondaryWorkers" value="0" />
+
+  <label>No. of Tertiary Workers (₹650):</label>
+  <input type="number" id="tertiaryWorkers" value="0" />
+
+  <label>Amount Received on Monday:</label>
+  <input type="number" id="mon" value="0" />
+  <label>Amount Received on Tuesday:</label>
+  <input type="number" id="tue" value="0" />
+  <label>Amount Received on Wednesday:</label>
+  <input type="number" id="wed" value="0" />
+  <label>Amount Received on Thursday:</label>
+  <input type="number" id="thu" value="0" />
+  <label>Amount Received on Friday:</label>
+  <input type="number" id="fri" value="0" />
+
+  <button onclick="calculateWages()">Calculate Wages</button>
+  <button onclick="downloadAsImage()">Download as JPEG</button>
+
+  <div id="output"></div>
+</div>
+
+<script>
+function calculateWages() {
+  const monday = new Date(document.getElementById("mondayDate").value);
+  if (isNaN(monday)) {
+    alert("Please select a valid Monday date.");
+    return;
+  }
+
+  const saturday = new Date(monday);
+  saturday.setDate(monday.getDate() + 5);
+
+  const main = parseInt(document.getElementById("mainWorkers").value || 0);
+  const sec = parseInt(document.getElementById("secondaryWorkers").value || 0);
+  const ter = parseInt(document.getElementById("tertiaryWorkers").value || 0);
+
+  const totalSalary = main * 1200 + sec * 900 + ter * 650;
+
+  const mon = parseInt(document.getElementById("mon").value || 0);
+  const tue = parseInt(document.getElementById("tue").value || 0);
+  const wed = parseInt(document.getElementById("wed").value || 0);
+  const thu = parseInt(document.getElementById("thu").value || 0);
+  const fri = parseInt(document.getElementById("fri").value || 0);
+  const received = mon + tue + wed + thu + fri;
+
+  const balance = totalSalary - received;
+
+  const output = `
+    <div id="calculationBox">
+      <h2>Weekly Wage Summary</h2>
+      <p><strong>Week:</strong> ${monday.toDateString()} - ${saturday.toDateString()}</p>
+      <p>Main Workers: ${main} × ₹1200 = ₹${main * 1200}</p>
+      <p>Secondary Workers: ${sec} × ₹900 = ₹${sec * 900}</p>
+      <p>Tertiary Workers: ${ter} × ₹650 = ₹${ter * 650}</p>
+      <p><strong>Total Weekly Salary:</strong> ₹${totalSalary}</p>
+      <hr>
+      <p>Amount Received from Mon to Fri: ₹${received}</p>
+      <p><strong>Balance to be Paid on Saturday:</strong> ₹${balance}</p>
+    </div>
+  `;
+
+  document.getElementById("output").innerHTML = output;
+}
+
+function downloadAsImage() {
+  const outputDiv = document.getElementById("output");
+  if (!outputDiv.innerHTML.trim()) {
+    alert("Please calculate wages before downloading.");
+    return;
+  }
+  html2canvas(outputDiv).then((canvas) => {
+    const link = document.createElement("a");
+    link.download = "wage_summary.jpeg";
+    link.href = canvas.toDataURL("image/jpeg");
+    link.click();
+  });
+}
+</script>
+
+</body>
+</html>
