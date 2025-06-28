@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SPS COMPLEX</title>
+  <title>SPS Complex-Weekly Wage Calculator</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     * {
@@ -91,33 +91,41 @@
 <body>
 
 <div class="container">
-  <h1>SPS Complex - Weekly Wage Calculator</h1>
+  <h1>SPS Complex-Weekly Wage Calculator</h1>
 
   <label>Monday Date:</label>
   <input type="date" id="mondayDate" />
 
-  <label>No. of Mason (₹1200):</label>
-  <input type="number" id="mainWorkers" value="0" />
+  <label>No. of  மேஸ்திரி  (₹1200):</label>
+  <input type="number" id="mainWorker1" value="0" />
 
-  <label>No. of Mamutty (₹900):</label>
+  <label>No. of கம்பி (₹1200):</label>
+  <input type="number" id="mainWorker2" value="0" />
+
+  <label>No. of மம்முட்டி (₹900):</label>
   <input type="number" id="secondaryWorkers" value="0" />
 
-  <label>No. of Sithal (₹650):</label>
+  <label>No. of சித்தால் (₹650):</label>
   <input type="number" id="tertiaryWorkers" value="0" />
 
-  <label>Amount Received on Monday:</label>
+  <label>
+திங்கட்கிழமை பெறப்பட்ட தொகை::</label>
   <input type="number" id="mon" value="0" />
-  <label>Amount Received on Tuesday:</label>
+  <label>செவ்வாய்க்கிழமை பெறப்பட்ட தொகை:</label>
   <input type="number" id="tue" value="0" />
-  <label>Amount Received on Wednesday:</label>
+  <label>புதன்கிழமை பெறப்பட்ட தொகை:</label>
   <input type="number" id="wed" value="0" />
-  <label>Amount Received on Thursday:</label>
+  <label>வியாழக்கிழமை பெறப்பட்ட தொகை:</label>
   <input type="number" id="thu" value="0" />
-  <label>Amount Received on Friday:</label>
+  <label>வெள்ளிக்கிழமை பெறப்பட்ட தொகை:</label>
   <input type="number" id="fri" value="0" />
 
+  <label>
+போனஸ் தொகை (ஏதேனும் இருந்தால்):</label>
+  <input type="number" id="bonus" value="0" />
+
   <button onclick="calculateWages()">Calculate Wages</button>
-  <button onclick="downloadAsImage()">Download as JPEG</button>
+  <button onclick="downloadAsImage()">Download</button>
 
   <div id="output"></div>
 </div>
@@ -133,11 +141,17 @@ function calculateWages() {
   const saturday = new Date(monday);
   saturday.setDate(monday.getDate() + 5);
 
-  const main = parseInt(document.getElementById("mainWorkers").value || 0);
+  const main1 = parseInt(document.getElementById("mainWorker1").value || 0);
+  const main2 = parseInt(document.getElementById("mainWorker2").value || 0);
   const sec = parseInt(document.getElementById("secondaryWorkers").value || 0);
   const ter = parseInt(document.getElementById("tertiaryWorkers").value || 0);
 
-  const totalSalary = main * 1200 + sec * 900 + ter * 650;
+  const main1Total = main1 * 1200;
+  const main2Total = main2 * 1200;
+  const secTotal = sec * 900;
+  const terTotal = ter * 650;
+
+  const totalSalary = main1Total + main2Total + secTotal + terTotal;
 
   const mon = parseInt(document.getElementById("mon").value || 0);
   const tue = parseInt(document.getElementById("tue").value || 0);
@@ -146,19 +160,31 @@ function calculateWages() {
   const fri = parseInt(document.getElementById("fri").value || 0);
   const received = mon + tue + wed + thu + fri;
 
-  const balance = totalSalary - received;
+  const bonus = parseInt(document.getElementById("bonus").value || 0);
+
+  const balance = totalSalary - received + bonus;
 
   const output = `
     <div id="calculationBox">
-      <h2>Weekly Wage Summary</h2>
+      <h2>SPS Complex-Weekly Wage Summary</h2>
       <p><strong>Week:</strong> ${monday.toDateString()} - ${saturday.toDateString()}</p>
-      <p>Main Workers: ${main} × ₹1200 = ₹${main * 1200}</p>
-      <p>Secondary Workers: ${sec} × ₹900 = ₹${sec * 900}</p>
-      <p>Tertiary Workers: ${ter} × ₹650 = ₹${ter * 650}</p>
+      <p>மேஸ்திரி : ${main1} × ₹1200 = ₹${main1Total}</p>
+      <p>கம்பி : ${main2} × ₹1200 = ₹${main2Total}</p>
+      <p>மம்முட்டி: ${sec} × ₹900 = ₹${secTotal}</p>
+      <p>சித்தால்: ${ter} × ₹650 = ₹${terTotal}</p>
       <p><strong>Total Weekly Salary:</strong> ₹${totalSalary}</p>
       <hr>
-      <p>Amount Received from Mon to Fri: ₹${received}</p>
-      <p><strong>Balance to be Paid on Saturday:</strong> ₹${balance}</p>
+      <p><u><strong>
+ஒவ்வொரு நாளும் பெறப்பட்ட தொகை:</strong></u></p>
+      <p>திங்கட்கிழமை: ₹${mon}</p>
+      <p>செவ்வாய்க்கிழமை: ₹${tue}</p>
+      <p>புதன்கிழமை: ₹${wed}</p>
+      <p>வியாழக்கிழமை: ₹${thu}</p>
+      <p>வெள்ளிக்கிழமை: ₹${fri}</p>
+      <p><strong>Total பெறப்பட்டது :</strong> ₹${received}</p>
+      <p>போனஸ் தொகை: ₹${bonus}</p>
+      <hr>
+      <p><strong>இறுதி தொகை:</strong> ₹${balance}</p>
     </div>
   `;
 
